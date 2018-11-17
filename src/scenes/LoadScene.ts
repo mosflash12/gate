@@ -24,27 +24,49 @@ export class LoadScene extends Phaser.Scene {
             this.load.audio(CST.AUDIO[prop], CST.AUDIO[prop]);
         }
     }
-    loadSprites(frameConfig?: Phaser.Loader.FileTypes.ImageFrameConfig) {
+    loadSpritesheet(keys: string[], frameConfig?: Phaser.Loader.FileTypes.ImageFrameConfig) {
         this.load.setPath("./assets/sprite");
 
-        for (let prop in CST.SPRITE) {
+        for (let i = 0; i < keys.length; i++) {
             //@ts-ignore
-            this.load.spritesheet(CST.SPRITE[prop], CST.SPRITE[prop], frameConfig);
+            this.load.spritesheet(keys[i], keys[i], frameConfig);
+        }
+    }
+    loadAtlas() {
+        this.load.setPath("./assets/atlas");
+
+        for (let prop in CST.ATLAS) {
+            //@ts-ignore
+            this.load.atlas(CST.ATLAS[prop], `${CST.ATLAS[prop]}.png`, `${CST.ATLAS[prop]}.json`)
+        }
+
+    }
+    loadSpriteSheetAtlas(keys: string[], atlas: string, frameConfig: Phaser.Loader.FileTypes.ImageFrameConfig) {
+        for (let i = 0; i < keys.length; i++) {
+            this.textures.addSpriteSheetFromAtlas(keys[i], { frameHeight: frameConfig.frameHeight, frameWidth: frameConfig.frameWidth, atlas: atlas, frame: keys[i] });
+        }
+    }
+    createSharedAnimations(keys: string[], config: { animationName: string, frameRate: number, frames: number[], repeat?: number }) {
+        for (let i = 0; i < keys.length; i++) {
+
+            this.anims.create({
+                key: `${keys[i]}${config.animationName}`,
+                frameRate: config.frameRate,
+                frames: this.anims.generateFrameNumbers(keys[i], {
+                    frames: config.frames
+                }),
+                repeat: config.repeat
+            })
         }
     }
     preload() {
-        this.load.spritesheet("anna", "./assets/sprite/anna.png", {frameHeight: 64, frameWidth: 64});
-        //load atlases
-        this.load.atlas("characters", "./assets/sprite/characters.png", "./assets/sprite/characters.json")
-        this.load.atlas("daze", "./assets/sprite/daze.png", "./assets/sprite/daze.json")
 
         //load image, spritesheet, sound
-        this.loadAudio();
-        this.loadSprites({
-            frameHeight: 32,
-            frameWidth: 32
-        });
         this.loadImages();
+        this.loadAudio();
+        this.loadAtlas();
+        this.loadSpritesheet([CST.SPRITE.CAT], { frameHeight: 32, frameWidth: 32 });
+        this.loadSpritesheet([CST.SPRITE.ANNA], { frameWidth: 64, frameHeight: 64 });
 
         //create loading bar
 
@@ -75,7 +97,7 @@ export class LoadScene extends Phaser.Scene {
         })
 
         this.load.on("complete", () => {
-            //this.scene.start(CST.SCENES.MENU, "hello from LoadScene");
+
         });
 
         this.load.on("load", (file: Phaser.Loader.File) => {
@@ -83,7 +105,32 @@ export class LoadScene extends Phaser.Scene {
         })
     }
     create() {
+        
+        this.loadSpriteSheetAtlas([CST.SPRITE.HOODED, CST.SPRITE.MANDY], CST.ATLAS.CHARACTERS, { frameHeight: 64, frameWidth: 64 }); //needs atlas to be fully loaded first
+        this.createSharedAnimations([CST.SPRITE.HOODED, CST.SPRITE.MANDY], { animationName: "right", frameRate: 9, frames: [143, 144, 145, 146, 147, 148, 149, 150, 151]});
 
+        this.anims.create({
+            key: "dazzle",
+            frameRate: 10,
+            //@ts-ignore
+            frames: this.anims.generateFrameNames("daze", {
+                prefix: "daze0",
+                suffix: ".png",
+                start: 0,
+                end: 41,
+            }),
+            repeat: -1,
+        });
+        
+        this.anims.create({
+            key: "left",
+            frameRate: 10,
+            frames: this.anims.generateFrameNumbers("anna", {
+                start: 9,
+                end: 17
+            })
+        });
+        
         this.scene.start(CST.SCENES.MENU);
     }
 }

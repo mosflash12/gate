@@ -14,6 +14,13 @@ export const CST = {
         TITLE: "shuinvy-childhood.mp3"
     },
     SPRITE: {
-        CAT: "cat.png"
+        CAT: "cat.png",
+        ANNA: "anna.png",
+        MANDY: "mandy",
+        HOODED: "hooded"
+    },
+    ATLAS: { 
+        CHARACTERS: "characters",
+        DAZE: "daze"
     }
 }
