@@ -1,6 +1,6 @@
 # gate
 open source game made in phaser 3, html5 and typescript.
-Complimented by a [video tutorial series](https://www.youtube.com/watch?v=OS7neDUUhPE)
+Complimented by a [video tutorial series](https://www.youtube.com/watch?v=OS7neDUUhPE) Please see yt tree for latest youtube tutorial code.
 
 # goals
 * cutscenes and dialouge system for story
